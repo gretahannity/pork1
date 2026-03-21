@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do NPM Dependencies and DevDependencies Affect Your Production Build?</title>
+    <style>
+        :root { --accent: #3182ce; --text: #2d3748; --code-bg: #f7fafc; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: var(--text); max-width: 750px; margin: 0 auto; padding: 2rem; background: #fff; }
+        header { border-bottom: 2px solid #edf2f7; margin-bottom: 2rem; padding-bottom: 1rem; }
+        h1 { font-size: 2.25rem; color: #1a202c; line-height: 1.2; letter-spacing: -0.025em; }
+        .author-meta { color: #718096; font-size: 0.9rem; margin-top: 10px; }
+        code { background: var(--code-bg); padding: 0.2rem 0.4rem; border-radius: 4px; font-family: SFMono-Regular, Consolas, monospace; font-size: 0.9em; border: 1px solid #e2e8f0; }
+        .info-box { background: #ebf8ff; border-left: 4px solid var(--accent); padding: 1.5rem; margin: 2rem 0; border-radius: 0 4px 4px 0; }
+        pre { background: #1a202c; color: #fff; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+        footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #a0aec0; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Do NPM Dependencies and DevDependencies Affect Your Production Build?</h1>
+    <div class="author-meta">Technical Analysis • JavaScript Ecosystem • By Matthew Burfield</div>
+</header>
+
+<main>
+    <p>In the Node.js ecosystem, the distinction between <code>dependencies</code> and <code>devDependencies</code> in your <code>package.json</code> is a critical architectural choice. But how exactly do they impact the final artifacts sent to production?</p>
+
+    <h2>The Core Difference</h2>
+    <p>When you run <code>npm install</code>, both types are downloaded. However, when deploying to a production environment using <code>npm install --production</code>, only the items listed in the <code>dependencies</code> object are installed.</p>
+
+    <div class="info-box">
+        <strong>The "Tree-Shaking" Reality:</strong> If you are using a modern bundler like Webpack or Vite, the bundler only includes code that is actually <em>imported</em> in your source files. If a devDependency is never imported, it will never reach the client’s browser.
+    </div>
+
+    <h2>Impact on Build Pipelines</h2>
+    <p>While <code>devDependencies</code> might not bloat your final JS bundle, they do affect:</p>
+    <ul>
+        <li><strong>CI/CD Speed:</strong> More devDependencies mean longer <code>npm install</code> times during your build process.</li>
+        <li><strong>Security:</strong> Every package added is a potential vulnerability point, regardless of which section it sits in.</li>
+        <li><strong>Server Disk Space:</strong> If you don't prune your node_modules, your server storage will be consumed by tools like Test Runners and Linters.</li>
+    </ul>
+
+    <pre><code>// Correct practice for package.json
+{
+  "dependencies": {
+    "react": "^18.0.0",
+    "axios": "^1.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  }
+}</code></pre>
+
+</main>
+
+<footer>
+    <p>&copy; 2026 Matthew Burfield | Technical Engineering Resources</p>
+</footer>
+
+</body>
+</html>
